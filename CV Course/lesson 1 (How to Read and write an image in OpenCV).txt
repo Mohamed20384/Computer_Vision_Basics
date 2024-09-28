@@ -1,0 +1,8 @@
+import cv2
+from google.colab.patches import cv2_imshow
+
+# Read image
+img = cv2.imread('apple.jpg', -1) # 0 for grayscale, 1 for color, -1 for alpha channel
+
+# Show image
+cv2_imshow(img)

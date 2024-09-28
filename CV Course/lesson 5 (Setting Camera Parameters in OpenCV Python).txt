@@ -1,0 +1,24 @@
+import cv2
+
+cap = cv2.VideoCapture(0)
+print(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+print(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+cap.set(3, 3000) # Set your frame width
+cap.set(4, 3000) # Set your frame height
+
+print(cap.get(3)) # Get your frame width
+print(cap.get(4)) # Get your frame height
+
+while(cap.isOpened()): # While camera is open
+    ret, frame = cap.read() # Read frames        
+    if ret == True: # Still there is a frame to process        
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) # Convert frame to grayscale
+        cv2.imshow('frame', gray)                 
+        if cv2.waitKey(1) & 0xFF == ord('q'): # Wait for key press from keyboard                 
+            break                     
+    else: # If ret is false         
+        break              
+
+cap.release() # Close camera
+cv2.destroyAllWindows() # Close window   

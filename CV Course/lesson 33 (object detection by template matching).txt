@@ -1,0 +1,70 @@
+import cv2 as cv
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Read the target image and template image in grayscale
+target_img = cv.imread('messi5.jpg', cv.IMREAD_GRAYSCALE)
+template_img = cv.imread('messi_face.jpg', cv.IMREAD_GRAYSCALE)
+
+# Perform template matching using the TM_CCORR_NORMED method
+result = cv.matchTemplate(target_img, template_img, cv.TM_CCORR_NORMED)
+
+# Find the location of the best match in the result
+min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
+top_left = max_loc
+h, w = template_img.shape
+
+# Draw a rectangle around the detected region in the target image
+bottom_right = (top_left[0] + w, top_left[1] + h)
+cv.rectangle(target_img, top_left, bottom_right, 255, 2)
+
+# Display the target image with the detected region
+plt.imshow(target_img, cmap='gray')
+plt.title('Detected Region')
+plt.axis('off')
+plt.show()
+
+=======================================================================================
+
+import cv2 as cv
+import numpy as np
+from matplotlib import pyplot as plt
+
+# Read the target image and template image in grayscale
+img = cv.imread('messi5.jpg', cv.IMREAD_GRAYSCALE)
+assert img is not None, "File could not be read, check with os.path.exists()"
+img2 = img.copy()
+
+template = cv.imread('messi_face.jpg', cv.IMREAD_GRAYSCALE)
+assert template is not None, "File could not be read, check with os.path.exists()"
+w, h = template.shape[::-1]
+
+# All the 6 methods for comparison in a list
+methods = ['cv.TM_CCOEFF', 'cv.TM_CCOEFF_NORMED', 'cv.TM_CCORR',
+           'cv.TM_CCORR_NORMED', 'cv.TM_SQDIFF', 'cv.TM_SQDIFF_NORMED']
+
+for meth in methods:
+    img = img2.copy()
+    method = eval(meth)
+
+    # Apply template Matching
+    res = cv.matchTemplate(img, template, method)
+    min_val, max_val, min_loc, max_loc = cv.minMaxLoc(res)
+
+    # If the method is TM_SQDIFF or TM_SQDIFF_NORMED, take the minimum
+    if method in [cv.TM_SQDIFF, cv.TM_SQDIFF_NORMED]:
+        top_left = min_loc
+    else:
+        top_left = max_loc
+    bottom_right = (top_left[0] + w, top_left[1] + h)
+
+    # Draw a rectangle on the target image to highlight the detected region
+    cv.rectangle(img, top_left, bottom_right, 255, 2)
+
+    # Display the matching result and the target image with the detected point
+    plt.subplot(121), plt.imshow(res, cmap='gray')
+    plt.title('Matching Result'), plt.xticks([]), plt.yticks([])
+    plt.subplot(122), plt.imshow(img, cmap='gray')
+    plt.title('Detected Point'), plt.xticks([]), plt.yticks([])
+    plt.suptitle(meth)
+    plt.show()
